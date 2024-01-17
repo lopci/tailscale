@@ -1,11 +1,7 @@
 name: "Dockerfile build"
 on: 
-  push:
-    branches:
-    - main
-  pull_request:
-    branches:
-      - "*"
+  workflow_dispatch:
+  # For now, only run on requests, not the main branches.
 jobs:
   deploy:
     runs-on: ubuntu-latest
