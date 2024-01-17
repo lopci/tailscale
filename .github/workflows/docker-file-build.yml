@@ -1,11 +1,29 @@
 name: "Dockerfile build"
 on: 
   workflow_dispatch:
-  # For now, only run on requests, not the main branches.
+  # For now, only run manually
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: "Build Docker image"
-      run: docker build .
+    - name: Build Docker Image
+      uses: docker/build-push-action@v5
+      with:
+        tags: tailscale-arm5-build:latest
+        load: true
+        push: false
+    - uses: shrink/actions-docker-extract@v3
+      id: extract
+      with:
+        image: tailscale-arm5-build:latest
+        path: /usr/local/bin
+        destination: dist
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        path: dist
+        name: tailscale-arm5-binaries
+        if-no-files-found: error
+        retention-days: 0
+        compression-level: 0
